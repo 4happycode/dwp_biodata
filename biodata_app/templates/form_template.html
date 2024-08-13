@@ -1,0 +1,153 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Biodata</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>{% if user_form.instance.pk %}Update Data{% else %}Input Data{% endif %}</h1>
+
+    {% if user_form.instance.pk %}
+    <form method="post" enctype="multipart/form-data" action="{% url 'user_update_view' user_form.instance.pk %}">
+    {% else %}
+    <form method="post" enctype="multipart/form-data" action="{% url 'user_form_view' %}">
+    {% endif %}
+        {% csrf_token %}
+        
+        <!-- Input untuk Nama -->
+        <div class="form-group">
+            {{ user_form.nama.label_tag }} 
+            {{ user_form.nama }}
+            {% if user_form.nama.errors %}
+                <div class="error">{{ user_form.nama.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Input untuk Alamat -->
+        <div class="form-group">
+            {{ user_form.alamat.label_tag }} 
+            {{ user_form.alamat }}
+        </div>
+
+        <!-- Input untuk No KTP -->
+        <div class="form-group">
+            {{ user_form.no_ktp.label_tag }} 
+            {{ user_form.no_ktp }}
+            {% if user_form.no_ktp.errors %}
+                <div class="error">{{ user_form.no_ktp.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Pendidikan Formset -->
+    {{ pendidikan_formset.management_form }}
+    <div id="pendidikan_formset">
+        {% for form in pendidikan_formset %}
+            <div class="form-row">
+                {% if form.instance.pk %}
+                    <input type="hidden" name="{{ form.prefix }}-id" value="{{ form.instance.pk }}">
+                {% endif %}
+                <div class="form-group">
+                    {{ form.sekolah.label_tag }} {{ form.sekolah|add_required }}
+                    {% if form.sekolah.errors %}
+                        <div class="error">{{ form.sekolah.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.jurusan.label_tag }} {{ form.jurusan|add_required }}
+                    {% if form.jurusan.errors %}
+                        <div class="error">{{ form.jurusan.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.tahun_masuk.label_tag }} {{ form.tahun_masuk|add_required }}
+                    {% if form.tahun_masuk.errors %}
+                        <div class="error">{{ form.tahun_masuk.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.tahun_lulus.label_tag }} {{ form.tahun_lulus|add_required }}
+                    {% if form.tahun_lulus.errors %}
+                        <div class="error">{{ form.tahun_lulus.errors }}</div>
+                    {% endif %}
+                </div>
+                {% comment %} <div class="delete-checkbox">
+                    {{ form.DELETE }} {{ form.DELETE.label_tag }}
+                    <!-- Customize the delete button appearance -->
+                    <button type="button" class="delete-button" onclick="this.previousElementSibling.checked = !this.previousElementSibling.checked;">
+                        Delete
+                    </button>
+                </div> {% endcomment %}
+            </div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-pendidikan" class="add-button">Tambah Data Pendidikan</button>
+
+        <h3>Pengalaman Kerja</h3>
+        {{ pengalaman_formset.management_form }}
+        <div id="pengalaman_formset">
+            {% for form in pengalaman_formset %}
+                <div class="form-row">
+                    {% if form.instance.pk %}
+                        <input type="hidden" name="{{ form.prefix }}-id" value="{{ form.instance.pk }}">
+                    {% endif %}
+                    <div class="form-group">
+                        {{ form.perusahaan.label_tag }} {{ form.perusahaan|add_required }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.jabatan.label_tag }} {{ form.jabatan|add_required }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.tahun.label_tag }} {{ form.tahun|add_required }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.keterangan.label_tag }} {{ form.keterangan }}
+                    </div>
+                    {% comment %} <div class="delete-checkbox">
+                        {{ form.DELETE }} {{ form.DELETE.label_tag }}
+                        <!-- Customize the delete button appearance -->
+                        <button type="button" class="delete-button" onclick="this.previousElementSibling.checked = !this.previousElementSibling.checked;">
+                            Delete
+                        </button>
+                    </div> {% endcomment %}
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-pengalaman" class="add-button">Tambah Data Pengalaman Kerja</button>
+
+        <div class="form-group">
+            {{ user_form.foto.label_tag }} 
+            {{ user_form.foto }}
+        </div>
+
+        <button type="submit">Kirim</button>
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            $('#add-pendidikan').on('click', function() {
+                var form_idx = $('#id_pendidikan-TOTAL_FORMS').val();
+                var new_form = $('#pendidikan_formset .form-row:last').clone();
+                new_form.html(new_form.html().replace(/pendidikan-\d+/g, 'pendidikan-' + form_idx));
+                new_form.find('input').val(''); // Clear the input values
+                $('#pendidikan_formset').append(new_form);
+                $('#id_pendidikan-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+            });
+        
+            $('#add-pengalaman').on('click', function() {
+                var form_idx = $('#id_pengalaman-TOTAL_FORMS').val();
+                var new_form = $('#pengalaman_formset .form-row:last').clone();
+                new_form.html(new_form.html().replace(/pengalaman-\d+/g, 'pengalaman-' + form_idx));
+                new_form.find('input').val(''); // Clear the input values
+                $('#pengalaman_formset').append(new_form);
+                $('#id_pengalaman-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Pengguna</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style_list.css' %}">
+</head>
+<body>
+    <h1>Daftar Pengguna</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Alamat</th>
+                <th>No KTP</th>
+                <th>Foto</th>
+                <th>Detail</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.nama }}</td>
+                    <td>{{ user.alamat }}</td>
+                    <td>{{ user.no_ktp }}</td>
+                    <td>
+                        {% if user.foto %}
+                            <img src="{{ user.foto.url }}" alt="{{ user.nama }}" width="50">
+                        {% else %}
+                            No Photo
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'user_detail' user.id %}">Lihat Detail</a></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">Data pengguna tidak tersedia.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'user_form_view' %}">Tambah Pengguna</a>
+</body>
+</html>

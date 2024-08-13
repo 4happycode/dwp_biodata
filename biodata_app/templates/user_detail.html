@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Pengguna</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Detail Pengguna: {{ user.nama }}</h1>
+    
+    <form>
+        <!-- Nama -->
+        <div class="form-group">
+            <label for="nama">Nama:</label>
+            <p>{{ user.nama }}</p>
+        </div>
+
+        <!-- Alamat -->
+        <div class="form-group">
+            <label for="alamat">Alamat:</label>
+            <p>{{ user.alamat }}</p>
+        </div>
+
+        <!-- No KTP -->
+        <div class="form-group">
+            <label for="no_ktp">No KTP:</label>
+            <p>{{ user.no_ktp }}</p>
+        </div>
+
+        <!-- Foto -->
+        <div class="form-group">
+            <label for="foto">Foto:</label>
+            {% if user.foto %}
+                <img src="{{ user.foto.url }}" alt="{{ user.nama }}" width="200">
+            {% else %}
+                <p>No Photo</p>
+            {% endif %}
+        </div>
+    </form>
+    
+    <h2>Pendidikan</h2>
+    <ul>
+        {% for pendidikan in pendidikan_list %}
+            <li>
+                <div class="form-group">
+                    <label>Sekolah:</label>
+                    <p>{{ pendidikan.sekolah }}</p>
+                </div>
+                <div class="form-group">
+                    <label>Jurusan:</label>
+                    <p>{{ pendidikan.jurusan }}</p>
+                </div>
+                <div class="form-group">
+                    <label>Tahun Masuk:</label>
+                    <p>{{ pendidikan.tahun_masuk }}</p>
+                </div>
+                <div class="form-group">
+                    <label>Tahun Lulus:</label>
+                    <p>{{ pendidikan.tahun_lulus }}</p>
+                </div>
+            </li>
+        {% empty %}
+            <li>Data pendidikan tidak tersedia.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Pengalaman Kerja</h2>
+    <ul>
+        {% for pengalaman in pengalaman_list %}
+            <li>
+                <div class="form-group">
+                    <label>Perusahaan:</label>
+                    <p>{{ pengalaman.perusahaan }}</p>
+                </div>
+                <div class="form-group">
+                    <label>Jabatan:</label>
+                    <p>{{ pengalaman.jabatan }}</p>
+                </div>
+                <div class="form-group">
+                    <label>Tahun:</label>
+                    <p>{{ pengalaman.tahun }}</p>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan:</label>
+                    <p>{{ pengalaman.keterangan }}</p>
+                </div>
+            </li>
+        {% empty %}
+            <li>Data pengalaman kerja tidak tersedia.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'user_list' %}">Kembali ke Daftar Pengguna</a>
+</body>
+</html>
